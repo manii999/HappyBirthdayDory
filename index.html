@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Arslene</title>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        .envelope {
+            position: relative;
+            width: 300px; /* Envelope width */
+            height: 180px; /* Envelope height */
+            transition: box-shadow 0.5s; /* Smooth transition for glow */
+            z-index: 2; /* Ensure the envelope is on top of the stars */
+        }
+
+        .flap {
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 90px solid pink; /* Flap height */
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.5s ease; /* Smooth transition for flap disappearance */
+        }
+
+        .body {
+            background-color: pink;
+            width: 300px; /* Match envelope width */
+            height: 90px; /* Body height */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .paper {
+            background-color: white;
+            width: 280px; /* Increased paper width */
+            height: auto; /* Allow height to adjust based on content */
+            position: absolute;
+            bottom: 40px; /* Lower position to avoid overlap with heart */
+            left: 10px; /* Position adjustment */
+            display: none; /* Initially hidden */
+            font-family: 'Luckiest Guy', cursive;
+            color: black;
+            text-align: left; /* Align text to the left for better readability */
+            transition: transform 1s ease, opacity 1s ease; /* Smooth transition for movement and opacity */
+            transform: translateY(30px); /* Start slightly lower */
+            opacity: 0; /* Start as invisible */
+            padding: 10px; /* Add padding for the text */
+            white-space: pre-wrap; /* Preserve line breaks */
+            box-sizing: border-box; /* Include padding in width and height calculations */
+            z-index: 1; /* Ensure paper is above other elements */
+        }
+
+        .heart {
+            background: none;
+            border: none;
+            font-size: 50px; /* Heart size */
+            position: absolute;
+            top: 70%; /* Lowered position to avoid overlap */
+            left: 50%; /* Centered horizontally */
+            transform: translate(-50%, -50%); /* Centering adjustment */
+            cursor: pointer;
+            z-index: 3; /* Ensure heart is on top of all elements */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .click-message {
+            position: absolute;
+            color: white; /* Change text color to white */
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 12px; /* Smaller font size */
+            opacity: 1; /* Initially visible */
+            pointer-events: none; /* Prevent interaction */
+            transition: opacity 0.5s ease; /* Fade effect */
+        }
+
+        /* Falling stars animation */
+        @keyframes falling-stars {
+            0% {
+                top: -10px;
+                opacity: 1;
+            }
+            100% {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+
+        .star {
+            position: absolute;
+            background-color: pink; /* Pink color for stars (from your original code) */
+            border-radius: 50%;
+            animation: falling-stars 3s infinite ease-in-out;
+        }
+
+        /* Glow animation with the exact pink color as the stars */
+        @keyframes glow-animation {
+            0% {
+                box-shadow: 0 0 20px 5px pink; /* Light pink glow (same as star color) */
+            }
+            50% {
+                box-shadow: 0 0 30px 10px pink; /* Brighter light pink glow */
+            }
+            100% {
+                box-shadow: 0 0 20px 5px pink; /* Light pink glow */
+            }
+        }
+
+        .glow {
+            animation: glow-animation 2s infinite ease-in-out; /* Slow glowing animation */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="envelope" id="envelope">
+            <div class="flap" id="flap"></div>
+            <div class="body"></div>
+            <div class="paper" id="paper">
+                Happyyyy Birthdayyyy Arsleeeeene!! 
+                I wanted to do something special for you so I coded this thing, I hope you like it, i even used a drake song just for u. Ill keep it short and just say I hope you always get everything you want and everything you work hard for. I hope you know you deserve all the beautiful things in this world and more cuz you are truly a beautiful person, inside and out, and if you ever forget ill be there to remind you.<br> You are the loveliest person, sometimes. JKJK, happy birthday again and i luv you.
+            </div>
+            <button id="heartButton" class="heart">
+                ❤️
+                <span id="clickMessage" class="click-message">Click!</span> <!-- Click message element inside the heart -->
+            </button>
+        </div>
+    </div>
+    <audio id="audio" src="https://api.fabdl.com/spotify/download-mp3/5b4f79ca17f35ae252d5d424fbae40b4"></audio>
+
+    <script>
+        let isOpen = false; // Track envelope state
+        let starElements = []; // Array to hold the star elements
+        const audio = document.getElementById('audio'); // Get the audio element
+        const clickMessage = document.getElementById('clickMessage'); // Get the click message element
+
+        // Function to create falling pink stars
+        function createFallingStars() {
+            // Get the size of the window
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            // Calculate the number of stars based on screen size (more area -> more stars)
+            const numberOfStars = Math.floor(screenWidth * screenHeight / 10000); // You can adjust this ratio for more or fewer stars
+
+            for (let i = 0; i < numberOfStars; i++) { // Create stars based on calculated number
+                let star = document.createElement("div");
+                star.classList.add("star");
+                
+                // Set the random position for the star within the screen
+                star.style.left = `${Math.random() * 100}%`; // Random horizontal position
+                star.style.top = `${Math.random() * -100}%`; // Start from a random position above the screen
+                star.style.width = `${Math.random() * 5 + 3}px`; // Random width for stars (between 3px and 8px)
+                star.style.height = star.style.width; // Keep the star round by setting the height equal to width
+                star.style.animationDuration = `${Math.random() * 3 + 2}s`; // Random falling speed (2-5 seconds)
+
+                document.body.appendChild(star); // Add star to body
+                starElements.push(star); // Keep track of the star element
+            }
+        }
+
+        // Function to remove all falling stars
+        function removeFallingStars() {
+            starElements.forEach(star => {
+                star.remove(); // Remove each star from the DOM
+            });
+            starElements = []; // Clear the array
+        }
+
+        // Function to close the envelope
+        function closeEnvelope() {
+            const flap = document.getElementById('flap');
+            const paper = document.getElementById('paper');
+            const envelope = document.getElementById('envelope');
+
+            // Close envelope
+            flap.style.opacity = '1'; // Restore flap visibility
+            // Hide paper
+            paper.style.opacity = '0';
+            paper.style.transform = 'translateY(30px)'; // Move paper down
+            setTimeout(() => {
+                paper.style.display = 'none'; // Set display none after fade-out
+            }, 1000); // Match timeout with transition duration
+            // Remove glow effect
+            envelope.classList.remove('glow');
+
+            // Remove stars
+            removeFallingStars();
+
+            // Reset "Click!" message visibility
+            clickMessage.style.opacity = '1';
+        }
+
+        // When the heart button is clicked
+        document.getElementById('heartButton').addEventListener('click', function() {
+            const flap = document.getElementById('flap');
+            const paper = document.getElementById('paper');
+            const envelope = document.getElementById('envelope');
+
+            // Hide "Click!" message when the envelope opens
+            clickMessage.style.opacity = '0';
+
+            if (!isOpen) {
+                // Open envelope
+                flap.style.opacity = '0'; // Make flap disappear
+                // Show paper with movement and fade-in effect
+                paper.style.display = 'block';
+                setTimeout(() => {
+                    paper.style.transform = 'translateY(0)'; // Move paper up
+                    paper.style.opacity = '1'; // Fade in text
+                }, 10); // Delay to ensure display block takes effect
+                // Add glow effect
+                envelope.classList.add('glow');
+
+                // Play audio starting at 3:48
+                audio.currentTime = 228; // 3 minutes and 48 seconds
+                audio.play();
+
+                // Trigger falling stars effect
+                createFallingStars();
+            } else {
+                // Close envelope if already open
+                closeEnvelope();
+
+                // Stop audio
+                audio.pause();
+                audio.currentTime = 228; // Reset audio to the start time (3:48)
+            }
+
+            // Toggle state
+            isOpen = !isOpen;
+        });
+
+        // When the audio ends, close the envelope and remove stars
+        audio.addEventListener('ended', function() {
+            closeEnvelope();
+        });
+    </script>
+</body>
+</html>
